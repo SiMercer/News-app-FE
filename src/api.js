@@ -1,33 +1,21 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://news-site-app.onrender.com/api",
+  baseURL: "http://185.219.111.33:23704/api",
 });
 
-const getTopics = () => {
-  return api.get("/topics").then((data) => {
-    return data;
-  });
-};
-
-const getArticles = (sort_by = "created_at", order = "desc") => {
-  return api
-    .get("/articles", {
-      params: { sort_by, order },
-    })
-    .then((res) => res);
+const getArticles = () => {
+  return api.get("/articles").then((res) => res.data.articles);
 };
 
 const getArticleByID = (article_id) => {
-  return api.get("/articles/${article_id}").then((data) => {
-    return data;
-  });
+  return api.get(`/articles/${article_id}`).then((res) => res.data.article);
 };
 
 const getCommentsByArticleByID = (article_id) => {
-  return api.get(`/articles/${article_id}/comments`).then((res) => {
-    return res.data.comments || [];
-  });
+  return api
+    .get(`/articles/${article_id}/comments`)
+    .then((res) => res.data.comments || []);
 };
 
 const postCommentByArticleID = (article_id, comment) => {
@@ -37,23 +25,21 @@ const postCommentByArticleID = (article_id, comment) => {
 };
 
 const deleteCommentsByArticleByID = (comment_id) => {
-  return api.delete(`/comments/${comment_id}`).then((res) => {
-    return data;
-  });
+  return api.delete(`/comments/${comment_id}`).then((res) => res.data);
 };
 
 const patchArticleVotes = (article_id, vote) => {
   return api
     .patch(`/articles/${article_id}`, { inc_votes: vote })
-    .then((data) => {
-      return data;
-    });
+    .then((res) => res.data.article);
 };
 
 const getUsers = () => {
-  return api.get("/users").then((data) => {
-    return data;
-  });
+  return api.get("/users").then((res) => res.data.users);
+};
+
+const getTopics = () => {
+  return api.get("/topics").then((res) => res.data.topics);
 };
 
 export {
@@ -66,3 +52,4 @@ export {
   postCommentByArticleID,
   deleteCommentsByArticleByID,
 };
+
