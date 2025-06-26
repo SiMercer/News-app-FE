@@ -8,14 +8,13 @@ const baseURL = isLAN
 const api = axios.create({ baseURL });
 
 const getArticles = () => {
-  return api
-    .get("/articles")
+  return api.get("/articles")
     .then((res) => {
       console.log("getArticles response:", res);
       return res.data.articles;
     })
     .catch((err) => {
-      console.error("getArticles error:", err);
+      console.error("Error fetching articles:", err);
       throw err;
     });
 };
