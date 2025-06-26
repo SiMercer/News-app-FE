@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://185.219.111.33:23704/api",
+  baseURL: "http://185.219.111.33:23704/News-app-BE-api",
 });
 
 const getArticles = () => {
