@@ -37,9 +37,22 @@ const patchArticleVotes = (article_id, vote) => {
     .then((res) => res.data.article);
 };
 
+// const getUsers = () => {
+//   return api.get("/users").then((res) => res.data.users);
+// };
+
 const getUsers = () => {
-  return api.get("/users").then((res) => res.data.users);
+  return api.get("/users")
+    .then((res) => {
+      console.log('getUsers response:', res);
+      return res.data.users;
+    })
+    .catch((err) => {
+      console.error('getUsers error:', err);
+      throw err;
+    });
 };
+
 
 const getTopics = () => {
   return api.get("/topics").then((res) => res.data.topics);
