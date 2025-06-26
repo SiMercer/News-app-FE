@@ -1,8 +1,11 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://185.219.111.33:23704/News-app-BE-api",
-});
+const isLAN = window.location.hostname.startsWith('192.168.');
+const baseURL = isLAN
+  ? 'http://192.168.8.150:23704/News-app-BE-api'
+  : 'http://185.219.111.33:23704/News-app-BE-api';
+
+const api = axios.create({ baseURL });
 
 const getArticles = () => {
   return api.get("/articles").then((res) => res.data.articles);
