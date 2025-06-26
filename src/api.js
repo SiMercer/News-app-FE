@@ -12,10 +12,6 @@ const getArticles = () => {
     .then((res) => {
       console.log("getArticles response:", res);
       return res.data.articles;
-    })
-    .catch((err) => {
-      console.error("Error fetching articles:", err);
-      throw err;
     });
 };
 
