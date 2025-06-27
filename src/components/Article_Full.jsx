@@ -1,78 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getArticleById, getUsers } from "../api";
+import { useParams } from "react-router-dom";
 import Comment_Container from "./Comment_Container";
-import { patchArticleVotes } from "../api";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import Errors from "./Errors";
 
-function Article_Full({ article, comments, user }) {
-  if (!article) return <p>Loading article...</p>;
-  const [articlesVotesTally, setArticlesVotesTally] = useState(article.votes);
-  const [voteMade, setVoteMade] = useState("");
+const Article_Full = () => {
+  const { article_id } = useParams();
+  const [article, setArticle] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState(null);
 
-  const handleVotePatch = (vote) => {
-    setVoteMade(vote === "dec" ? -1 : 1);
-    const voteChange = vote === "dec" ? -1 : 1;
-    patchArticleVotes(article.article_id, voteChange);
+  useEffect(() => {
+    getArticleById(article_id)
+      .then((res) => {
+        const articleData = res?.data?.article;
+        if (!articleData) throw new Error("Article not found");
+        setArticle(articleData);
+      })
+      .catch((err) => setError(err));
 
-    if (vote === "dec") {
-      setArticlesVotesTally(article.votes - 1);
-    }
+    getUsers()
+      .then((res) => {
+        const userData = res?.data?.users;
+        if (!userData) throw new Error("Users not found");
+        setUsers(userData);
+      })
+      .catch((err) => setError(err));
+  }, [article_id]);
 
-    if (vote === "inc") {
-      setArticlesVotesTally(article.votes + 1);
-    }
-  };
+  if (error) return <Errors message={error.message} />;
+  if (!article) return <p>Loading...</p>;
+
+  const author = users.find((user) => user.username === article.author);
 
   return (
-    <>
-      <div className="article_full">
-        <div className="articleTitleRow">
-          <div className="articleTitle">{article.title}</div>
-          <div className="articleTitleDate">
-            {article.topic} : {article.author}
-          </div>
-          <div className="articleTitleDate">
-            {article.created_at.slice(0, -14)}
-          </div>
-        </div>
-
-        <div>
-          <img
-            className="articleImage"
-            src={article.article_img_url}
-            alt={article.title}
-          />
-        </div>
-
-        <div className="articleBody">
-          <h4>{article.body}</h4>
-        </div>
-
-        <div className="articleVotes">
-          <div>
-            Votes: {articlesVotesTally}
-            <button
-              disabled={voteMade === 1}
-              onClick={() => handleVotePatch("inc")}
-              className="navText"
-            >
-              +
-            </button>
-            <button
-              disabled={voteMade === -1}
-              onClick={() => handleVotePatch("dec")}
-              className="navText"
-            >
-              -
-            </button>
-          </div>
-        </div>
-        <div>
-        <Comment_Container article_id={article.article_id} user={user} />
-        </div>
-      </div>
-    </>
+    <section className="full-article">
+      <h2>{article.title}</h2>
+      <p>{article.body}</p>
+      <p>
+        <strong>Author:</strong> {author ? author.name : article.author}
+      </p>
+      <p>
+        <strong>Topic:</strong> {article.topic}
+      </p>
+      <Comment_Container article_id={article.article_id} />
+    </section>
   );
-}
+};
 
 export default Article_Full;
