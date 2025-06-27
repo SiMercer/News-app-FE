@@ -47,7 +47,7 @@ function Articles_Container({ setSelectedTopic, selectedTopic, topics, user }) {
 
   useEffect(() => {
     getArticles(sort_by, order).then((res) => {
-      setArticles(res.data.articles);
+      setArticles(res.articles);
       console.log(articles);
     });
   }, [sort_by, order]);
