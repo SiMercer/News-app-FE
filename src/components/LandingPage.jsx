@@ -8,7 +8,7 @@ function LandingPage({ topics, setSelectedTopic }) {
   useEffect(() => {
     getArticles()
       .then((res) => {
-        const articles = res.data.articles || [];
+        const articles = res.articles || [];
 
         const articlePerTopic = topics
           .map((topic) => {

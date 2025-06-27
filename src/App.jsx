@@ -15,7 +15,7 @@ function App() {
 
   useEffect(() => {
     getUsers().then((res) => {
-      setUser(res.data.users[0]);
+      setUser(res.users[0]);
     });
 
     getTopics().then((res) => {
