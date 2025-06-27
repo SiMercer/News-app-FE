@@ -10,28 +10,28 @@ const api = axios.create({ baseURL });
 const getArticles = () => {
   return api.get("/articles").then((res) => {
     console.log("getArticles FULL response:", res.data);
-    return res.data;
+    return res.data.articles;
   });
 };
 
 const getArticleByID = (article_id) => {
   return api.get(`/articles/${article_id}`).then((res) => {
     console.log(`getArticleByID (${article_id}) response:`, res.data);
-    return res.data;
+    return res.data.article;
   });
 };
 
 const getCommentsByArticleByID = (article_id) => {
   return api.get(`/articles/${article_id}/comments`).then((res) => {
     console.log(`getCommentsByArticleByID (${article_id}) response:`, res.data);
-    return res.data;
+    return res.data.comments;
   });
 };
 
 const postCommentByArticleID = (article_id, comment) => {
   return api.post(`/articles/${article_id}/comments`, comment).then((res) => {
     console.log(`postCommentByArticleID (${article_id}) response:`, res.data);
-    return res.data;
+    return res.data.comment;
   });
 };
 
@@ -45,21 +45,21 @@ const deleteCommentsByArticleByID = (comment_id) => {
 const patchArticleVotes = (article_id, vote) => {
   return api.patch(`/articles/${article_id}`, { inc_votes: vote }).then((res) => {
     console.log(`patchArticleVotes (${article_id}) response:`, res.data);
-    return res.data;
+    return res.data.article;
   });
 };
 
 const getUsers = () => {
   return api.get("/users").then((res) => {
     console.log("getUsers FULL response:", res.data);
-    return res.data;
+    return res.data.users;
   });
 };
 
 const getTopics = () => {
   return api.get("/topics").then((res) => {
     console.log("getTopics response:", res.data);
-    return res.data;
+    return res.data.topics;
   });
 };
 
