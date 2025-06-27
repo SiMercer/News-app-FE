@@ -1,19 +1,34 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { React, useState, useEffect } from "react";
 
-const Article_Preview = ({ article, users, topics }) => {
-  const author = users.find((user) => user.username === article.author);
-  const topic = topics.find((topic) => topic.slug === article.topic);
-
+function Article_Preview({ article, comments, onSelect }) {
   return (
-    <article className="article-preview">
-      <h3>
-        <Link to={`/articles/${article.article_id}`}>{article.title}</Link>
-      </h3>
-      <p>By: {author ? author.name : article.author}</p>
-      <p>Topic: {topic ? topic.description : article.topic}</p>
-    </article>
+    <>
+      <div
+        onClick={() => onSelect(article.article_id)}
+        className="article_preview"
+      >
+        <div className="article_preview_image_container">
+          <img
+            className="article_preview_image"
+            src={article.article_img_url}
+            alt={article.title}
+          />
+          <div className="article_preview_topic_overlay">:{article.topic}</div>
+        </div>
+        <selection className="article_preview_text">
+          <div className="article_preview_titles">{article.title}</div>
+
+          <div className="article_preview_meta">
+            <div className="article_preview_created_at">
+              {article.created_at.slice(0, -14)}
+            </div>
+            <div className="article_preview_topic">{article.author}</div>
+            <div className="article_preview_votes">Votes: {article.votes}</div>
+          </div>
+        </selection>
+      </div>
+    </>
   );
-};
+}
 
 export default Article_Preview;

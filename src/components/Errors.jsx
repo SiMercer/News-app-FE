@@ -1,12 +1,21 @@
-import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Errors = ({ message }) => {
+function Error() {
+  const url = useLocation();
+  const navigate = useNavigate();
+
   return (
-    <div className="error">
-      <h3>Error</h3>
-      <p>{message || "Something went wrong. Please try again later."}</p>
-    </div>
+    <section>
+      <br />
+      <div className="errPath">
+        404: The Path "{url.pathname}" was not found.
+      </div>
+      <br />
+      <div>
+        <button onClick={() => navigate("/")}>Home</button>
+      </div>
+    </section>
   );
-};
+}
 
-export default Errors;
+export default Error;

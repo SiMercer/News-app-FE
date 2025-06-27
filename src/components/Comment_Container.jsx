@@ -1,41 +1,110 @@
-import React, { useEffect, useState } from "react";
-import { getCommentsByArticleId, getUsers } from "../api";
-import Comments_Card from "./Comments_Card";
-import Errors from "./Errors";
+import React, { useState, useEffect } from "react";
+import {
+  getCommentsByArticleByID,
+  postCommentByArticleID,
+  deleteCommentsByArticleByID,
+} from "../api";
+import CommentCard from "./Comments_Card";
 
-const Comment_Container = ({ article_id }) => {
+function Comment_Container({ article_id, user }) {
   const [comments, setComments] = useState([]);
-  const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
+  const [newComment, setNewComment] = useState("");
+  const [showAddComment, setShowAddComment] = useState(false);
+  const [confirmingCommentId, setConfirmingCommentId] = useState(null);
+  const [deletedComments, setDeletedComments] = useState([]);
 
   useEffect(() => {
-    getCommentsByArticleId(article_id)
-      .then((res) => {
-        const commentsData = res?.data?.comments;
-        if (!commentsData) throw new Error("Comments not found");
-        setComments(commentsData);
-      })
-      .catch((err) => setError(err));
+    if (!article_id) return;
 
-    getUsers()
-      .then((res) => {
-        const usersData = res?.data?.users;
-        if (!usersData) throw new Error("Users not found");
-        setUsers(usersData);
+    getCommentsByArticleByID(article_id)
+      .then((data) => {
+        setComments(Array.isArray(data) ? data : []);
       })
-      .catch((err) => setError(err));
+      .catch((err) => {
+        setError("Unable to load comments");
+        setComments([]);
+      });
   }, [article_id]);
 
-  if (error) return <Errors message={error.message} />;
+  const handleToggleAddComment = () => {
+    setShowAddComment((prev) => !prev);
+  };
+
+  const handlePostComment = (event) => {
+    event.preventDefault();
+    const comment = {
+      username: user.username,
+      article_id: article_id,
+      body: newComment,
+      votes: 0,
+    };
+
+    postCommentByArticleID(article_id, comment).then((postedComment) => {
+      setComments((prev) => [postedComment, ...prev]);
+      setNewComment("");
+      setShowAddComment(false);
+    });
+  };
+
+  const handleDeleteClick = (commentId) => {
+    setConfirmingCommentId(commentId);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmingCommentId(null);
+  };
+
+  const handleConfirmDelete = (commentId) => {
+    setDeletedComments((prev) => [...prev, commentId]);
+    setConfirmingCommentId(null);
+    deleteCommentsByArticleByID(commentId);
+  };
 
   return (
-    <div className="comment-container">
-      <h4>Comments</h4>
-      {comments.map((comment) => (
-        <Comments_Card key={comment.comment_id} comment={comment} users={users} />
-      ))}
-    </div>
+    <section className="Comments">
+      <div>
+        <button onClick={handleToggleAddComment} className="navText">
+          Post Comment
+        </button>
+      </div>
+
+      {showAddComment && (
+        <form onSubmit={handlePostComment}>
+          <input
+            name="commentBody"
+            value={newComment}
+            placeholder="Enter comment & submit..."
+            onChange={(event) => setNewComment(event.target.value)}
+          />
+          <button type="submit" disabled={!newComment.trim()}>
+            Submit
+          </button>
+        </form>
+      )}
+
+      {error && <p>{error}</p>}
+
+      <div className="articleComments">
+        <div className="commentsHeader">Comments:</div>
+        <ul>
+          {comments
+            .filter((comment) => !deletedComments.includes(comment.comment_id))
+            .map((comment) => (
+              <CommentCard
+                key={comment.comment_id}
+                user={user}
+                comment={comment}
+                isConfirming={confirmingCommentId === comment.comment_id}
+                onDeleteClick={handleDeleteClick}
+                onCancelClick={handleCancelDelete}
+                onConfirmDelete={handleConfirmDelete}
+              />
+            ))}
+        </ul>
+      </div>
+    </section>
   );
-};
+}
 
 export default Comment_Container;

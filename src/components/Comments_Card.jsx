@@ -1,19 +1,44 @@
 import React from "react";
 
-const Comments_Card = ({ comment, users }) => {
-  const author = users.find((user) => user.username === comment.author);
+function CommentCard({
+  comment,
+  user,
+  isConfirming,
+  onDeleteClick,
+  onCancelClick,
+  onConfirmDelete,
+}) {
+  const isAuthor = comment.author === user.username;
 
   return (
-    <div className="comment-card">
-      <p>{comment.body}</p>
-      <p>
-        <strong>By:</strong> {author ? author.name : comment.author}
-      </p>
-      <p>
-        <strong>Votes:</strong> {comment.votes}
-      </p>
-    </div>
-  );
-};
+    <li>
+      <div className="commentUser">
+        {comment.author} :<h6>{comment.created_at}</h6>
+      </div>
 
-export default Comments_Card;
+      {isAuthor && !isConfirming && (
+        <div className="deleteReq">
+          <button onClick={() => onDeleteClick(comment.comment_id)}>
+            Delete Comment
+          </button>
+        </div>
+      )}
+
+      {isAuthor && isConfirming && (
+        <div className="deleteComfirm">
+          <button onClick={() => onConfirmDelete(comment.comment_id)}>
+            Confirm
+          </button>
+          <button onClick={onCancelClick}>Cancel</button>
+        </div>
+      )}
+
+      <div className="comment">{comment.body}</div>
+      <div>
+        <h6>Votes {comment.votes}</h6>
+      </div>
+    </li>
+  );
+}
+
+export default CommentCard;
