@@ -1,6 +1,6 @@
 // src/components/LandingPage.jsx
 import React, { useEffect, useState } from "react";
-import { getArticles, getUsers, getTopics } from "../../utils/api";
+import { getArticles, getUsers, getTopics } from "../api";
 
 const LandingPage = () => {
   const [articles, setArticles] = useState([]);
