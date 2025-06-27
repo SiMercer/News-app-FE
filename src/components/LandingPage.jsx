@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTopics } from "../utils/api";
+import { getTopics } from "../../utils/api";
 import Topics_Card from "./Topics_Card";
 import Errors from "./Errors";
 
