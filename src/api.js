@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.8.150:23704/News-app-BE-api/api",
+  baseURL: "http://192.168.8.150:23704/News-app-BE-api/",
   // baseURL: "https://news-site-app.onrender.com/api",
 });
 
