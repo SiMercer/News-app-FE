@@ -8,11 +8,10 @@ const baseURL = isLAN
 const api = axios.create({ baseURL });
 
 const getArticles = () => {
-  return api.get("/articles")
-    .then((res) => {
-      console.log("getArticles full res:", JSON.stringify(res, null, 2));
-      return res.data.articles;
-    });
+  return api.get("/articles").then((res) => {
+    console.log("getArticles response:", res); // Helpful debug
+    return res.data.articles;
+  });
 };
 
 const getArticleByID = (article_id) => {
@@ -81,14 +80,13 @@ const patchArticleVotes = (article_id, vote) => {
 };
 
 const getUsers = () => {
-  return api
-    .get("/users")
+  return api.get("/users")
     .then((res) => {
       console.log("getUsers response:", res);
       return res.data.users;
     })
     .catch((err) => {
-      console.error("getUsers error:", err);
+      console.error('getUsers error:', err);
       throw err;
     });
 };

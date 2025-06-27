@@ -8,7 +8,7 @@ function UserProfile({ user, setUser }) {
 
   useEffect(() => {
     getUsers().then((res) => {
-      setUsers(res.data.users);
+      setUsers(res.data.users); // <-- fixed
     });
   }, []);
 
