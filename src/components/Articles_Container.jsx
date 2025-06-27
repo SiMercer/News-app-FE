@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getArticles, getUsers } from "../utils/api";
+import { getArticles, getUsers } from "../api";
 import Article_Preview from "./Article_Preview";
 import Errors from "./Errors";
 
