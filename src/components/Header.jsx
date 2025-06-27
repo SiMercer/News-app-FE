@@ -30,7 +30,7 @@ function Header({ user, selectedTopic }) {
 
   return (
     <header className="header">
-      <div className="headerText">FeedDuck.</div>
+      <div className="headerText">FeedDuck</div>
       <div>
         <img
           src={logoToUse}
