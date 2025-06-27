@@ -10,7 +10,7 @@ const api = axios.create({ baseURL });
 const getArticles = () => {
   return api.get("/articles")
     .then((res) => {
-      console.log("getArticles response:", res);
+      console.log("getArticles full res:", JSON.stringify(res, null, 2));
       return res.data.articles;
     });
 };

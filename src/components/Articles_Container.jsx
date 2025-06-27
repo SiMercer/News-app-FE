@@ -17,11 +17,8 @@ function Articles_Container({ setSelectedTopic, selectedTopic, topics, user }) {
 
   useEffect(() => {
     const topicByParams = searchParams.get("topics");
-
     if (!topics || topics.length === 0) return;
-
     const isValidTopic = topics.some((topic) => topic.slug === topicByParams);
-
     if (isValidTopic) {
       setSelectedTopic(topicByParams);
       setBadTopicErr(false);
@@ -47,8 +44,8 @@ function Articles_Container({ setSelectedTopic, selectedTopic, topics, user }) {
 
   useEffect(() => {
     getArticles(sort_by, order).then((res) => {
-      setArticles(res.data.articles);
-      console.log(articles);
+      setArticles(res.articles); // ✅ FIXED
+      console.log(res.articles); // ✅ updated for visibility
     });
   }, [sort_by, order]);
 
