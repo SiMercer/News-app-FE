@@ -1,16 +1,49 @@
-export default function User_Profile({ user }) {
-  if (!user || typeof user !== "object") {
-    console.warn("Invalid user data:", user);
-    return <p>User data not available.</p>;
-  }
+import { React, useState, useEffect } from "react";
+import { getUsers } from "../api.js";
+import { useNavigate } from "react-router-dom";
 
-  const { avatar_url, username, name } = user;
+function UserProfile({ user, setUser }) {
+  const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getUsers().then((res) => {
+      setUsers(res.data.users);
+    });
+  }, []);
+
+  const handleUserChange = (event) => {
+    const selectedUsername = event.target.value;
+    const selectedUser = users.find((u) => u.username === selectedUsername);
+    setUser(selectedUser);
+    handleBackToArticles();
+  };
+
+  const handleBackToArticles = () => {
+    navigate("/articles");
+  };
 
   return (
-    <div className="user_profile">
-      <img src={avatar_url || ""} alt={`${username}'s avatar`} />
-      <h3>{username || "Unknown user"}</h3>
-      <p>{name || "Name not provided"}</p>
+    <div className="topics">
+      <label htmlFor="topics">Switch User:</label>
+      <select
+        name="userSelect"
+        id="userSelect"
+        value={user?.username || ""}
+        onChange={handleUserChange}
+      >
+        {users.map((user) => (
+          <option key={user.username} value={user.username}>
+            {user.username}
+          </option>
+        ))}
+      </select>
+
+      <div>
+        <button onClick={handleBackToArticles}>Back to the articles</button>
+      </div>
     </div>
   );
 }
+
+export default UserProfile;
