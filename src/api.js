@@ -1,3 +1,4 @@
+// api.js
 import axios from "axios";
 
 const isLAN = window.location.hostname.startsWith("192.168.");
@@ -6,6 +7,8 @@ const baseURL = isLAN
   : "http://185.219.111.33:23704/News-app-BE-api";
 
 const api = axios.create({ baseURL });
+
+// ---- Article Endpoints ----
 
 const getArticles = () => {
   return api.get("/articles").then((res) => {
@@ -20,6 +23,15 @@ const getArticleByID = (article_id) => {
     return res.data.article;
   });
 };
+
+const patchArticleVotes = (article_id, vote) => {
+  return api.patch(`/articles/${article_id}`, { inc_votes: vote }).then((res) => {
+    console.log(`patchArticleVotes (${article_id}) response:`, res.data);
+    return res.data.article;
+  });
+};
+
+// ---- Comment Endpoints ----
 
 const getCommentsByArticleByID = (article_id) => {
   return api.get(`/articles/${article_id}/comments`).then((res) => {
@@ -42,12 +54,7 @@ const deleteCommentsByArticleByID = (comment_id) => {
   });
 };
 
-const patchArticleVotes = (article_id, vote) => {
-  return api.patch(`/articles/${article_id}`, { inc_votes: vote }).then((res) => {
-    console.log(`patchArticleVotes (${article_id}) response:`, res.data);
-    return res.data.article;
-  });
-};
+// ---- User & Topic Endpoints ----
 
 const getUsers = () => {
   return api.get("/users").then((res) => {
