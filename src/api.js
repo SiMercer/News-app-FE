@@ -11,18 +11,27 @@ const getArticles = () => {
   return api.get("/articles")
     .then((res) => {
       console.log("getArticles FULL response:", res);
-      return res.data.articles; // only works if `res.data.articles` exists
+      if (res?.data?.articles) {
+        return res.data.articles;
+      } else {
+        throw new Error("Articles data not found in response");
+      }
+    })
+    .catch((err) => {
+      console.error("getArticles error:", err);
+      throw err;
     });
 };
 
-
-
 const getArticleByID = (article_id) => {
-  return api
-    .get(`/articles/${article_id}`)
+  return api.get(`/articles/${article_id}`)
     .then((res) => {
       console.log(`getArticleByID (${article_id}) response:`, res);
-      return res.data.article;
+      if (res?.data?.article) {
+        return res.data.article;
+      } else {
+        throw new Error("Article data not found");
+      }
     })
     .catch((err) => {
       console.error(`getArticleByID (${article_id}) error:`, err);
@@ -31,11 +40,10 @@ const getArticleByID = (article_id) => {
 };
 
 const getCommentsByArticleByID = (article_id) => {
-  return api
-    .get(`/articles/${article_id}/comments`)
+  return api.get(`/articles/${article_id}/comments`)
     .then((res) => {
       console.log(`getCommentsByArticleByID (${article_id}) response:`, res);
-      return res.data.comments || [];
+      return res?.data?.comments || [];
     })
     .catch((err) => {
       console.error(`getCommentsByArticleByID (${article_id}) error:`, err);
@@ -44,11 +52,14 @@ const getCommentsByArticleByID = (article_id) => {
 };
 
 const postCommentByArticleID = (article_id, comment) => {
-  return api
-    .post(`/articles/${article_id}/comments`, comment)
+  return api.post(`/articles/${article_id}/comments`, comment)
     .then((res) => {
       console.log(`postCommentByArticleID (${article_id}) response:`, res);
-      return res.data.comment;
+      if (res?.data?.comment) {
+        return res.data.comment;
+      } else {
+        throw new Error("Comment data not returned");
+      }
     })
     .catch((err) => {
       console.error(`postCommentByArticleID (${article_id}) error:`, err);
@@ -57,8 +68,7 @@ const postCommentByArticleID = (article_id, comment) => {
 };
 
 const deleteCommentsByArticleByID = (comment_id) => {
-  return api
-    .delete(`/comments/${comment_id}`)
+  return api.delete(`/comments/${comment_id}`)
     .then((res) => {
       console.log(`deleteCommentsByArticleByID (${comment_id}) response:`, res);
       return res.data;
@@ -70,11 +80,14 @@ const deleteCommentsByArticleByID = (comment_id) => {
 };
 
 const patchArticleVotes = (article_id, vote) => {
-  return api
-    .patch(`/articles/${article_id}`, { inc_votes: vote })
+  return api.patch(`/articles/${article_id}`, { inc_votes: vote })
     .then((res) => {
       console.log(`patchArticleVotes (${article_id}) response:`, res);
-      return res.data.article;
+      if (res?.data?.article) {
+        return res.data.article;
+      } else {
+        throw new Error("Updated article not found in response");
+      }
     })
     .catch((err) => {
       console.error(`patchArticleVotes (${article_id}) error:`, err);
@@ -86,16 +99,27 @@ const getUsers = () => {
   return api.get("/users")
     .then((res) => {
       console.log("getUsers FULL response:", res);
-      return res.data.users; // only works if `res.data.users` exists
+      if (res?.data?.users) {
+        return res.data.users;
+      } else {
+        throw new Error("Users data not found in response");
+      }
+    })
+    .catch((err) => {
+      console.error("getUsers error:", err);
+      throw err;
     });
 };
 
 const getTopics = () => {
-  return api
-    .get("/topics")
+  return api.get("/topics")
     .then((res) => {
       console.log("getTopics response:", res);
-      return res.data.topics;
+      if (res?.data?.topics) {
+        return res.data.topics;
+      } else {
+        throw new Error("Topics data not found");
+      }
     })
     .catch((err) => {
       console.error("getTopics error:", err);
