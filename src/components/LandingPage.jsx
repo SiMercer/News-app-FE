@@ -1,48 +1,109 @@
-import { useEffect, useState } from "react";
-import { getTopics } from "../api";
-import Topics_Card from "./Topics_Card";
-import Errors from "./Errors";
+// src/components/LandingPage.jsx
+import React, { useEffect, useState } from "react";
+import { getArticles, getUsers, getTopics } from "../../utils/api";
 
-export default function LandingPage() {
+const LandingPage = () => {
+  const [articles, setArticles] = useState([]);
+  const [users, setUsers] = useState([]);
   const [topics, setTopics] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [err, setErr] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    setErr(null);
-
-    getTopics()
-      .then((topicsData) => {
-        console.log("getTopics response:", topicsData);
-        if (topicsData && Array.isArray(topicsData.topics)) {
-          setTopics(topicsData.topics);
+    // Fetch articles
+    getArticles()
+      .then((data) => {
+        if (data && Array.isArray(data.articles)) {
+          console.log("Articles data received:", data.articles);
+          setArticles(data.articles);
         } else {
-          throw new Error("Invalid format: topics not received as array");
+          console.error("Invalid articles format", data);
+          throw new Error("Invalid data format from API");
         }
       })
-      .catch((error) => {
-        console.error("Error fetching topics:", error);
-        setErr(error);
+      .catch((err) => {
+        console.error("Error fetching articles:", err);
+        setError("Failed to fetch articles");
+      });
+
+    // Fetch users
+    getUsers()
+      .then((data) => {
+        if (data && Array.isArray(data.users)) {
+          console.log("Users data received:", data.users);
+          setUsers(data.users);
+        } else {
+          console.error("Invalid users format", data);
+          throw new Error("Invalid data format from API");
+        }
       })
-      .finally(() => {
-        setIsLoading(false);
+      .catch((err) => {
+        console.error("Error fetching users:", err);
+        setError("Failed to fetch users");
+      });
+
+    // Fetch topics
+    getTopics()
+      .then((data) => {
+        if (data && Array.isArray(data)) {
+          console.log("Topics data received:", data);
+          setTopics(data);
+        } else {
+          console.error("Invalid topics format", data);
+          throw new Error("Invalid data format from API");
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching topics:", err);
+        setError("Failed to fetch topics");
       });
   }, []);
 
-  if (isLoading) return <p className="status">Loading topics...</p>;
-
-  if (err) return <Errors msg={err.message || "Failed to load topics"} />;
+  if (error) return <p>{error}</p>;
 
   return (
-    <section className="topics_container">
-      {Array.isArray(topics) && topics.length > 0 ? (
-        topics.map((topic) => (
-          <Topics_Card key={topic.slug} topic={topic} />
-        ))
-      ) : (
-        <p>No topics available.</p>
-      )}
-    </section>
+    <div>
+      <h1>Landing Page</h1>
+
+      <section>
+        <h2>Topics</h2>
+        {topics.length ? (
+          <ul>
+            {topics.map((topic, i) => (
+              <li key={i}>{topic.slug}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No topics found.</p>
+        )}
+      </section>
+
+      <section>
+        <h2>Articles</h2>
+        {articles.length ? (
+          <ul>
+            {articles.map((article, i) => (
+              <li key={i}>{article.title} by {article.author}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No articles found.</p>
+        )}
+      </section>
+
+      <section>
+        <h2>Users</h2>
+        {users.length ? (
+          <ul>
+            {users.map((user, i) => (
+              <li key={i}>{user.username}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No users found.</p>
+        )}
+      </section>
+    </div>
   );
-}
+};
+
+export default LandingPage;

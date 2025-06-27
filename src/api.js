@@ -57,12 +57,7 @@ const patchArticleVotes = (article_id, vote) => {
 const getUsers = () => {
   return api.get("/users").then((res) => {
     console.log("getUsers FULL response:", res.data);
-    if (res.data && Array.isArray(res.data.users)) {
-      return res.data.users;
-    } else {
-      console.warn("getUsers: Unexpected response structure", res.data);
-      return [];
-    }
+    return res.data;
   });
 };
 
