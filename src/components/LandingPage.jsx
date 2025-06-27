@@ -1,52 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { getArticles } from "../api";
-import TopicsCard from "./Topics_Card";
+import { useEffect, useState } from "react";
+import { getTopics } from "../utils/api";
+import Topics_Card from "./Topics_Card";
+import Errors from "./Errors";
 
-function LandingPage({ topics, setSelectedTopic }) {
-  const [articleForTopics, setArticleForTopics] = useState([]);
+export default function LandingPage() {
+  const [topics, setTopics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [err, setErr] = useState(null);
 
   useEffect(() => {
-    getArticles()
-      .then((res) => {
-        const articles = res.articles || [];
+    setIsLoading(true);
+    setErr(null);
 
-        const articlePerTopic = topics
-          .map((topic) => {
-            const article = articles.find(
-              (article) => article.topic === topic.slug
-            );
-            return article ? { ...article, topicName: topic.slug } : null;
-          })
-          .filter(Boolean);
-
-        setArticleForTopics(articlePerTopic);
+    getTopics()
+      .then((topicsData) => {
+        console.log("getTopics response:", topicsData);
+        if (topicsData && Array.isArray(topicsData.topics)) {
+          setTopics(topicsData.topics);
+        } else {
+          throw new Error("Invalid format: topics not received as array");
+        }
       })
-      .catch((err) => {
-        console.error("Error fetching articles:", err);
+      .catch((error) => {
+        console.error("Error fetching topics:", error);
+        setErr(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, [topics]);
+  }, []);
+
+  if (isLoading) return <p className="status">Loading topics...</p>;
+
+  if (err) return <Errors msg={err.message || "Failed to load topics"} />;
 
   return (
-    <section className="articles">
-      <div className="articles-Nav">
-        {/* <button className="navText" onClick={() => setSelectedTopic("All")}>
-          Browse All Articles
-        </button> */}
-      </div>
-
-      <h2 style={{ paddingLeft: "20px" }}>Select a Topic</h2>
-
-      <div className="articlesContainerPreview">
-        {articleForTopics.map((article) => (
-          <TopicsCard
-            key={article.article_id}
-            article={article}
-            setSelectedTopic={setSelectedTopic}
-          />
-        ))}
-      </div>
+    <section className="topics_container">
+      {Array.isArray(topics) && topics.length > 0 ? (
+        topics.map((topic) => (
+          <Topics_Card key={topic.slug} topic={topic} />
+        ))
+      ) : (
+        <p>No topics available.</p>
+      )}
     </section>
   );
 }
-
-export default LandingPage;
